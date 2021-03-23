@@ -1,58 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TouchableOpacity, StyleSheet, Image, RefreshControl, ActivityIndicator } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  Button,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  RefreshControl,
+  ActivityIndicator,
+} from 'react-native';
 import Container from '../component/Container';
 import * as rssParser from 'react-native-rss-parser';
-import { FlatList } from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
+import {FeedURL} from '../Util/Constant';
 
-export default function Feed({ navigation }) {
+export default function Feed({navigation}) {
   const [feed, setFeed] = useState([]);
   const [selectedId, setSelectedId] = useState();
   const [refreshing, setRereshing] = useState(false);
-  const [url, setUrl] = useState('https://feeds.24.com/articles/Fin24/Tech/rss');
+  const [url, setUrl] = useState(FeedURL);
   callAPI = () => {
     setRereshing(true);
-    console.log('Calling API ')
-    fetch(url).then((response) => {
-      return response.text()
-    }).then(async (responseData) => {
-      setRereshing(false);
-      const rss = await rssParser.parse(responseData);
-      let feeds = await rss.items.map((item, index) => { return { id: index, ...item } });
-      setFeed(feeds);
-    }).catch((error) => {
-      console.log(error)
-      setRereshing(false);
-    })
-  }
+    console.log('Calling API ');
+    fetch(url)
+      .then(response => {
+        return response.text();
+      })
+      .then(async responseData => {
+        setRereshing(false);
+        const rss = await rssParser.parse(responseData);
+        let feeds = await rss.items.map((item, index) => {
+          return {id: index, ...item};
+        });
+        setFeed(feeds);
+      })
+      .catch(error => {
+        console.log(error);
+        setRereshing(false);
+      });
+  };
 
   useEffect(() => {
     callAPI();
-  }, [url])
-  const Item = ({ item, onPress, style }) => (
+  }, [url]);
+  const Item = ({item, onPress, style}) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.content}>{item.description}</Text>
       {item.image ? <Image source={item.image}></Image> : null}
     </TouchableOpacity>
   );
-  const renderItem = ({ item }) => {
+  const renderItem = ({item}) => {
     return (
       <Item
         item={item}
-        onPress={(_) => { navigation.navigate('Details', { item }) }}
+        onPress={_ => {
+          navigation.navigate('Details', {item});
+        }}
       />
     );
   };
   return (
     <Container>
-
-      {feed && feed.length > 0 ?
-        (<><Text>Feed from {url}</Text>
+      {feed && feed.length > 0 ? (
+        <>
+          <Text>Feed from {url}</Text>
           <FlatList
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
-                onRefresh={(_) => callAPI()}
+                onRefresh={_ => callAPI()}
               />
             }
             data={feed}
@@ -60,31 +77,43 @@ export default function Feed({ navigation }) {
             keyExtractor={item => item.id}
           />
         </>
-        )
-        : (<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {refreshing ? <><ActivityIndicator size="large" /></> : <><Text>{'Feeds not available'}</Text>
-            <Button title={'Retry'} onPress={(_) => { callAPI() }} ></Button></>}
-        </View>)
-      }
-    </Container >
+      ) : (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          {refreshing ? (
+            <>
+              <ActivityIndicator size="large" />
+            </>
+          ) : (
+            <>
+              <Text>{'Feeds not available'}</Text>
+              <Button
+                title={'Retry'}
+                onPress={_ => {
+                  callAPI();
+                }}></Button>
+            </>
+          )}
+        </View>
+      )}
+    </Container>
   );
 }
 const styles = StyleSheet.create({
   title: {
     fontSize: 20,
-    color: 'white'
-  }, content: {
+    color: 'white',
+  },
+  content: {
     fontWeight: 'normal',
     fontSize: 15,
   },
   link: {
     color: 'blue',
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   item: {
     backgroundColor: 'gray',
     margin: 10,
-    padding: 5
-  }
-
-})
+    padding: 5,
+  },
+});
