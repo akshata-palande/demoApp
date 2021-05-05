@@ -29,7 +29,10 @@ export default function Feed({navigation}) {
       .then(async responseData => {
         setRereshing(false);
         //console.log(responseData.results);
-        setFeed(responseData.results);
+        let list = responseData.results.map((item, index) => {
+          return (item.key = index), item;
+        });
+        setFeed(list);
       })
       .catch(error => {
         console.log(error);
@@ -90,7 +93,7 @@ export default function Feed({navigation}) {
             }
             data={feed}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.key}
           />
         </>
       ) : (

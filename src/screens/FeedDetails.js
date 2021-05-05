@@ -7,7 +7,7 @@ import Container from '../component/Container';
 export default function FeedDetails({route}) {
   const {params} = route;
   const {title, description} = {...params.item};
-  // console.log('route', {...params.item});
+  // let date = new Date(params.item.releaseDate);
   return (
     <Container>
       <View style={{flexDirection: 'row'}}>
@@ -31,6 +31,9 @@ export default function FeedDetails({route}) {
       ) : null}
       {params.item.primaryGenreName ? (
         <Text style={styles.title}>Genre : {params.item.primaryGenreName}</Text>
+      ) : null}
+      {params.item.trackPrice && params.item.trackPrice !== -1 ? (
+        <Text style={styles.title}>Price : {params.item.trackPrice}$</Text>
       ) : null}
     </Container>
   );
