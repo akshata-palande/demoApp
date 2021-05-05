@@ -42,13 +42,22 @@ export default function Feed({navigation}) {
   }, [url]);
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-      <Text style={styles.title}>{item.artistName}</Text>
-      {/* <Text style={styles.content}>{item.artistViewUrl}</Text> */}
-      {/* {item.image ? <Image source={item.image}></Image> : null} */}
+      <View style={{flexDirectio: 'row'}}>
+        {item.artworkUrl30 ? (
+          <Image
+            style={styles.tinyLogo}
+            source={{uri: item.artworkUrl30}}></Image>
+        ) : (
+          <Text style={styles.content}>{item.artworkUrl30}</Text>
+        )}
+        <Text style={styles.title}>{item.artistName}</Text>
+      </View>
+      <Text style={styles.content}>{item.collectionCensoredName}</Text>
+      {/* <Text style={styles.content}>{item.description}</Text> */}
     </TouchableOpacity>
   );
   const renderItem = ({item}) => {
-    console.log('item >> ', item.artistName);
+    // console.log(item.artworkUrl60);
     return (
       <Item
         item={item}
@@ -98,7 +107,7 @@ export default function Feed({navigation}) {
 }
 const styles = StyleSheet.create({
   title: {
-    fontSize: 50,
+    fontSize: 20,
     color: 'black',
   },
   content: {
@@ -113,5 +122,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray',
     margin: 10,
     padding: 5,
+  },
+  tinyLogo: {
+    width: 50,
+    height: 50,
   },
 });
