@@ -42,20 +42,21 @@ export default function Feed({navigation}) {
   }, [url]);
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-      <View style={{flexDirectio: 'row'}}>
+      <View style={{flexDirection: 'row'}}>
         {item.artworkUrl30 ? (
           <Image
             style={styles.tinyLogo}
             source={{uri: item.artworkUrl30}}></Image>
-        ) : (
-          <Text style={styles.content}>{item.artworkUrl30}</Text>
-        )}
-        <Text style={styles.title}>{item.artistName}</Text>
+        ) : null}
+        <View>
+          <Text style={styles.content}>{item.collectionCensoredName}</Text>
+          <Text style={styles.content}>Artist:{item.artistName}</Text>
+        </View>
       </View>
-      <Text style={styles.content}>{item.collectionCensoredName}</Text>
       {/* <Text style={styles.content}>{item.description}</Text> */}
     </TouchableOpacity>
   );
+
   const renderItem = ({item}) => {
     // console.log(item.artworkUrl60);
     return (
@@ -69,6 +70,7 @@ export default function Feed({navigation}) {
   };
   return (
     <Container>
+      {refreshing ? <ActivityIndicator size="large" /> : null}
       {feed && feed.length > 0 ? (
         <>
           <Text>Feed from {url}</Text>
@@ -76,7 +78,10 @@ export default function Feed({navigation}) {
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
-                onRefresh={_ => callAPI()}
+                onRefresh={_ => {
+                  setRereshing(true);
+                  setcallAPI();
+                }}
               />
             }
             data={feed}
@@ -108,11 +113,17 @@ export default function Feed({navigation}) {
 const styles = StyleSheet.create({
   title: {
     fontSize: 20,
-    color: 'black',
+    color: 'white',
   },
   content: {
     fontWeight: 'normal',
     fontSize: 15,
+    marginLeft: 10,
+    marginRight: 10,
+    paddingLeft: 5,
+    paddingRight: 5,
+    flexWrap: 'wrap',
+    color: 'white',
   },
   link: {
     color: 'blue',
