@@ -47,7 +47,11 @@ export default function Feed({navigation}) {
           <Image
             style={styles.tinyLogo}
             source={{uri: item.artworkUrl30}}></Image>
-        ) : null}
+        ) : (
+          <Image
+            style={styles.tinyLogo}
+            source={require('../assets/images/MP3.png')}></Image>
+        )}
         <View>
           <Text style={styles.content}>{item.collectionCensoredName}</Text>
           <Text style={styles.content}>Artist:{item.artistName}</Text>
