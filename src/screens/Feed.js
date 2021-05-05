@@ -12,27 +12,24 @@ import {
 import Container from '../component/Container';
 import * as rssParser from 'react-native-rss-parser';
 import {FlatList} from 'react-native-gesture-handler';
-import {FeedURL} from '../Util/Constant';
+import {SongsURL} from '../Util/Constant';
 
 export default function Feed({navigation}) {
   const [feed, setFeed] = useState([]);
   const [selectedId, setSelectedId] = useState();
   const [refreshing, setRereshing] = useState(false);
-  const [url, setUrl] = useState(FeedURL);
+  const [url, setUrl] = useState(SongsURL);
   callAPI = () => {
     setRereshing(true);
     console.log('Calling API ');
     fetch(url)
       .then(response => {
-        return response.text();
+        if (response.status === 200) return response.json();
       })
       .then(async responseData => {
         setRereshing(false);
-        const rss = await rssParser.parse(responseData);
-        let feeds = await rss.items.map((item, index) => {
-          return {id: index, ...item};
-        });
-        setFeed(feeds);
+        //console.log(responseData.results);
+        setFeed(responseData.results);
       })
       .catch(error => {
         console.log(error);
@@ -45,12 +42,13 @@ export default function Feed({navigation}) {
   }, [url]);
   const Item = ({item, onPress, style}) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.content}>{item.description}</Text>
-      {item.image ? <Image source={item.image}></Image> : null}
+      <Text style={styles.title}>{item.artistName}</Text>
+      {/* <Text style={styles.content}>{item.artistViewUrl}</Text> */}
+      {/* {item.image ? <Image source={item.image}></Image> : null} */}
     </TouchableOpacity>
   );
   const renderItem = ({item}) => {
+    console.log('item >> ', item.artistName);
     return (
       <Item
         item={item}
@@ -100,8 +98,8 @@ export default function Feed({navigation}) {
 }
 const styles = StyleSheet.create({
   title: {
-    fontSize: 20,
-    color: 'white',
+    fontSize: 50,
+    color: 'black',
   },
   content: {
     fontWeight: 'normal',
